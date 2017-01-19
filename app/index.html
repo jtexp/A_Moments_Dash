@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+
+    </script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
+    </script>
+
+    <style>
+        body {
+            background-color: #000;
+            color: #ffe9ad;
+            font-size: 24px;
+
+        }
+
+        .weather {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .weather-night {
+            padding-top: 0;
+            padding-bottom: 10px;
+        }
+
+        .temperature {
+            font-size: 36px;
+        }
+
+        .text {
+            font-size: 16px;
+        }
+
+        #inside .temperature, #day0 .temperature, #day0-night .temperature {
+            font-size: 60px;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+
+<script>
+    window.onload = function() {
+
+
+
+        $.ajax({
+            url: "http://forecast.weather.gov/MapClick.php?lat=32.901&lon=-96.793&unit=0&lg=english&FcstType=json",
+            type: "GET",
+            crossDomain: true,
+            data: {},
+            dataType: "json",
+            success: function (json) {
+                parseWeather(json);
+                console.log(json);
+            },
+            error: function (xhr, status) {
+                alert("error");
+            }
+        });
+
+        $.ajax({
+            url: "tstat.json",
+            type: "GET",
+            //crossDomain: true,
+            data: {},
+            dataType: "json",
+            success: function (json) {
+                parseTstat(json);
+                console.log(json);
+            },
+            error: function (xhr, status) {
+                alert("error");
+            }
+        });
+
+        function parseTstat(json) {
+            $("#inside").find(".temperature").text(json.temp);
+        }
+
+        function parseWeather(json) {
+            tonight = false;
+            for (i = 0; i < 14; i++) {
+
+                i2 = i;
+                if (tonight == true) {
+                    i2 = i2-1;
+                }
+
+                if (i % 2 == 0) {
+                    const sel = $("#day" + i / 2);
+
+                    sel.find(".title").html(json.time.startPeriodName[i2]);
+                    sel.find(".image").html("<img src=\"" + json.data.iconLink[i2] + "\" />");
+                    sel.find(".temperature").html(json.data.temperature[i2]);
+                    sel.find(".text").html(json.data.weather[i2]);
+                }
+
+                else {
+                    const sel = $("#day" + (i-1) / 2 + "-night");
+
+                    sel.find(".title").html(json.time.startPeriodName[i2]);
+                    sel.find(".image").html("<img src=\"" + json.data.iconLink[i2] + "\" />");
+                    sel.find(".temperature").html(json.data.temperature[i2]);
+                    sel.find(".text").html(json.data.weather[i2]);
+
+                }
+                if ((json.time.startPeriodName[i] == "Tonight" || json.time.startPeriodName[i] == "Overnight") && i == 0) {
+                    tonight = true;
+                    i++;
+                }
+
+            }
+
+            console.log(JSON.parse(json.data.temperature[1]));
+
+
+        }
+
+
+    }
+
+</script>
+
+<body>
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <div class="col-md-6">
+
+            <div class="weather row">
+                <div class="col-md-2" id="inside">
+                    <div class="title">Inside</div>
+                    <div class="temperature"></div>
+
+                </div>
+                <div class="col-md-2" id="day0">
+                    <div class="title"></div>
+                    <div class="temperature"></div>
+                    <div class="image"></div>
+                    <div class="text"></div>
+                </div>
+                <div class="col-md-2" id="cur-obs">
+
+                </div>
+                <div class="col-md-2" id="day0-night">
+                    <div class="title"></div>
+                    <div class="image"></div>
+                    <div class="temperature"></div>
+                    <div class="text"></div>
+                </div>
+            </div>
+            <div class="weather row">
+                <div class="col-md-2" id="day1">
+                    <div class="title"></div>
+                    <div class="image"></div>
+                    <div class="temperature"></div>
+                    <div class="text"></div>
+                </div>
+                <div class="col-md-2" id="day2">
+                    <div class="title"></div>
+                    <div class="image"></div>
+                    <div class="temperature"></div>
+                    <div class="text"></div>
+                </div>
+                <div class="col-md-2" id="day3">
+                    <div class="title"></div>
+                    <div class="image"></div>
+                    <div class="temperature"></div>
+                    <div class="text"></div>
+                </div>
+                <div class="col-md-2" id="day4">
+                    <div class="title"></div>
+                    <div class="image"></div>
+                    <div class="temperature"></div>
+                    <div class="text"></div>
+                </div>
+                <div class="col-md-2" id="day5">
+                    <div class="title"></div>
+                    <div class="image"></div>
+                    <div class="temperature"></div>
+                    <div class="text"></div>
+                </div>
+                <div class="col-md-2" id="day6">
+                    <div class="title"></div>
+                    <div class="image"></div>
+                    <div class="temperature"></div>
+                    <div class="text"></div>
+                </div>
+            </div>
+            <div class="weather-night row">
+                <div class="col-md-2" id="day1-night">
+                    <div class="title"></div>
+                    <div class="image"></div>
+                    <div class="temperature"></div>
+                    <div class="text"></div>
+                </div>
+                <div class="col-md-2" id="day2-night">
+                    <div class="title"></div>
+                    <div class="image"></div>
+                    <div class="temperature"></div>
+                    <div class="text"></div>
+                </div>
+                <div class="col-md-2" id="day3-night">
+                    <div class="title"></div>
+                    <div class="image"></div>
+                    <div class="temperature"></div>
+                    <div class="text"></div>
+                </div>
+                <div class="col-md-2" id="day4-night">
+                    <div class="title"></div>
+                    <div class="image"></div>
+                    <div class="temperature"></div>
+                    <div class="text"></div>
+                </div>
+                <div class="col-md-2" id="day5-night">
+                    <div class="title"></div>
+                    <div class="image"></div>
+                    <div class="temperature"></div>
+                    <div class="text"></div>
+                </div>
+                <div class="col-md-2" id="day6-night">
+                    <div class="title"></div>
+                    <div class="image"></div>
+                    <div class="temperature"></div>
+                    <div class="text"></div>
+                </div>
+            </div>
+            <div class="graph row">
+                This is where the graph would go.
+
+            </div>
+
+
+        </div>
+        <div class="col-md-6">
+            This is where the to-do list would go.
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
